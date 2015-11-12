@@ -50,14 +50,3 @@ setMethod(
     return(mean(value))
   }
 )
-
-#
-# Do the business
-#
-pol1 <-new("pollutant")
-pol1
-slot(pol1,"dir")<-"/Users/asierabreu/rprograming/specdata/" 
-slot(pol1,"type")<-"nitrate"
-slot(pol1,"id")<-1:10
-
-m <-getMean(pol1)
