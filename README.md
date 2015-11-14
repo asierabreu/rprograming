@@ -9,14 +9,15 @@
  - Created a class pollutant.R with a pollutant object and a getMean method
  - Created default function pollutantmean.R  
 
+### Programing Task 2 Notes
+
+ -
+ -
+
+### Programing Task 1 Notes
+
+ -
+ -
+
 ### Results
 
- - R results and a direct awk sum can differ by up to 1% 
- - Example :
-   AWK command : for i in {0,1,2};do cat 07$i.csv | grep -v NA | sed 's/\,/ /g' | awk '{ SUM += $3} END { print SUM/NR}';done
-   
-   |AWK SUM	|R	| 
-   |------------|-------|
-   |0.254266	|0.25517|
-   |1.45761	|1.43160|
-   |2.41861	|2.36321|
