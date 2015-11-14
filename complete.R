@@ -7,7 +7,6 @@ complete<-function(dir,id=1:332) {
     n<-nrow(data[!(is.na(data["sulfate"])) & !(is.na(data["nitrate"])),])
     ids<-c(ids,i)
     nobs<-c(nobs,n)
-    cat("\ncomplete observations for sensor:",files[i],":",n)
   }
   cat("\n")
   df<-data.frame(ids,nobs)
