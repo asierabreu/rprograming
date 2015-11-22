@@ -11,10 +11,10 @@
 
 ### Programing Task 2 Notes
 
- -
+ - Completed . Some initial problems with variable scoping , solved by including a direct call to makeCacheMatrix function inside cacheSolve one.
  -
 
-### Programing Task 1 Notes
+### Programing Task 3 Notes
 
  -
  -
