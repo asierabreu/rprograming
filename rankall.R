@@ -10,39 +10,69 @@
 # 
 # Usage : example : rankhospital("MD","heart failure",5)
 #
-rankall<-function(outcome,ranking) {
+rankall<-function(outcome,ranking="best") {
   # Read input data
   validOutcomes<-c("heart attack","heart failure","pneumonia")
-  hospitals<-read.csv("hospitaldata/outcome-of-care-measures.csv",colClasses = "character")
+  hospitals<<-read.csv("hospitaldata/outcome-of-care-measures.csv",colClasses = "character")
   # Validity check
   if(!(outcome %in% validOutcomes)) stop("invalid outcome")
-  # Get the ranks
-  df<-data.frame("hospital"=character(),"state"=character())
-  values<-lapply(unique(hospitals$State),function(state,ranking) {
-    s<-hospitals[hospitals$State==state,]
-    switch(outcome,
-           "heart attack" ={
-             s=s[order(as.numeric(s[,11])),]
-             },
-           "heart failure"={
-             s=s[order(as.numeric(s[,17])),]
-             },
-           "pneumonia"    ={
-             s=s[order(as.numeric(s[,23])),]
-             }
-    )
-    if(ranking>nrow(s)) {
-      return(NA)
-    } else{
-      return(s[ranking,c(2,7)])
-    }
-  },
-  ranking=ranking)
+  # Get the ranks per state
   df<-NULL
-  for (i in 1:length(values)) {
-    row=c(values[[i]][1],values[[i]][2])
-    df<-rbind(df,row)
+  # Loop on unique states (order them alphabetically)
+  # Default rankign is "best"
+  for (state in sort(unique(hospitals$State))) {
+    df<-rbind(df,getRanks(state,ranking,outcome))
   }
-  colnames(df)<-c("hospital","state")
   return(df)
 } 
+#
+# Support function to get the specified hospital for given ranking in this state
+#
+getRanks<-function(state,ranking,outcome) {
+  o<-hospitals[hospitals$State==state,]
+  s<-hospitals[hospitals$State==state,]
+  # Now order first by ranking and the alphabetically within all hospitals in state
+  # Create a temporary dataframe only containing the Hospital Name ,State and Ranking
+  switch(outcome,
+         "heart attack" ={
+           s<-s[order(as.numeric(s[,11]),s[,2]),c(2,7,11)]
+           colnames(s)<-c("hospital","state","ranking")
+           if(ranking=="worst") {
+             s<-s[which.max(s[,3]),]
+           } else if(ranking=="best") {
+             s<-s[which.min(s[,3]),]
+           } else {
+            s<-s[ranking,]
+           }
+         },
+         "heart failure"={
+           s<-s[order(as.numeric(s[,17]),s[,2]),c(2,7,17)]
+           colnames(s)<-c("hospital","state","ranking")
+           if(ranking=="worst") {
+             s<-s[which.max(s[,3]),]
+           } else if(ranking=="best") {
+             s<-s[which.min(s[,3]),]
+           } else {
+             s<-s[ranking,]
+           }
+         },
+         "pneumonia"    ={
+           s<-s[order(as.numeric(s[,23]),s[,2]),c(2,7,23)]
+           colnames(s)<-c("hospital","state","ranking")
+           if(ranking=="worst") {
+             s<-s[which.max(s[,3]),]
+           } else if(ranking=="best") {
+             s<-s[which.min(s[,3]),]
+           } else {
+             s<-s[ranking,]
+           }
+         }
+  )
+  if(is.numeric(ranking) && ranking>nrow(o)) {
+    s$hospital<-NA
+    s$state<-state
+  }
+  # return a shortened version of the dataframe with only hospital and name
+  # AND sort outcome my hospital name alphabetically
+  return(s[order(s[,1]),c(1:2)])
+}
