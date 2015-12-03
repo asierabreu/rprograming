@@ -22,14 +22,22 @@ rankhospital<-function(state,outcome,ranking) {
   s=hospitals[hospitals$State==state,]
   # Get the ranks
   switch(outcome,
-         "heart attack" ={z=s[order(as.numeric(s[,11]),na.last = NA),c(2,11)]},
-         "heart failure"={z=s[order(as.numeric(s[,17]),na.last = NA),c(2,17)]},
-         "pneumonia"    ={z=s[order(as.numeric(s[,23]),na.last = NA),c(2,23)]}
+         "heart attack" ={
+           z=s[order(as.numeric(s[,11]),s[,2]),c(2,11)]
+           },
+         "heart failure"={
+           z=s[order(as.numeric(s[,17]),s[,2]),c(2,17)]
+           },
+         "pneumonia"    ={
+           z=s[order(as.numeric(s[,23]),s[,2]),c(2,23)]
+           }
   )
-  # now only those  for the given ranking
-  hits<-head(z,ranking)
-  # re-shape output
-  thisone<-hits[which.max(hits[,2]),1]
-  message(thisone)
-  return(thisone)
+  # now only that one for the given ranking
+  if(ranking=="worst") {
+    return(z[which.max(z[,2]),1])
+  } else if(ranking=="best") {
+    return(z[which.min(z[,2]),1])
+  } else {
+    return(z[ranking,1])
+  }
 } 
